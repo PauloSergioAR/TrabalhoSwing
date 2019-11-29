@@ -6,7 +6,14 @@
 package swing;
 
 import DAO.ClienteDAO;
+import DAO.CompraDAO;
+import DAO.ProdutoDAO;
+import DAO.VendedorDAO;
 import Model.Cliente;
+import Model.Compra;
+import Model.DisplayCompra;
+import Model.Produto;
+import Model.Vendedor;
 import java.awt.Color;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,10 +58,11 @@ public class Listagem extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         btn_exit = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        produtoTable = new javax.swing.JTable();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         compraTable = new javax.swing.JTable();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        produtoTable = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
         clienteTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -240,7 +248,7 @@ public class Listagem extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(415, Short.MAX_VALUE)
+                .addContainerGap(425, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(390, 390, 390)
                 .addComponent(btn_exit)
@@ -255,16 +263,6 @@ public class Listagem extends javax.swing.JFrame {
                     .addComponent(btn_exit, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        produtoTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Preço", "Estoque"
-            }
-        ));
-        jScrollPane1.setViewportView(produtoTable);
-
         compraTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -274,6 +272,20 @@ public class Listagem extends javax.swing.JFrame {
             }
         ));
         jScrollPane2.setViewportView(compraTable);
+
+        jTabbedPane1.addTab("Vendas", jScrollPane2);
+
+        produtoTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "Preço", "Estoque"
+            }
+        ));
+        jScrollPane1.setViewportView(produtoTable);
+
+        jTabbedPane1.addTab("Produtos", jScrollPane1);
 
         clienteTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -285,6 +297,8 @@ public class Listagem extends javax.swing.JFrame {
         ));
         jScrollPane4.setViewportView(clienteTable);
 
+        jTabbedPane1.addTab("Compradores", jScrollPane4);
+
         vendedorTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -295,6 +309,8 @@ public class Listagem extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(vendedorTable);
 
+        jTabbedPane1.addTab("Vendedores", jScrollPane3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -302,18 +318,10 @@ public class Listagem extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(1, 1, 1)
                 .addComponent(side_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -323,11 +331,7 @@ public class Listagem extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2)))
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 516, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(side_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5))
         );
@@ -336,7 +340,68 @@ public class Listagem extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
             
     private void initTables(){
+        updateVendasTable();
         updateClienteTable();
+        updateProdutosTable();
+        updateVendedoresTable();        
+    }
+    
+    public void updateVendedoresTable(){
+        DefaultTableModel vendedoresModel = (DefaultTableModel) vendedorTable.getModel();
+        
+        Object[] row = new Object[2];
+        vendedoresModel.setRowCount(0);
+        
+        try{
+            VendedorDAO dao = new VendedorDAO();
+            ArrayList<Vendedor> vendedores = dao.getAll();
+            for(Vendedor v : vendedores){
+                row[0] = v.getNome();
+                row[1] = v.getCodigo();                
+                vendedoresModel.addRow(row);
+            }            
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
+    public void updateProdutosTable(){
+        DefaultTableModel produtosModel = (DefaultTableModel) produtoTable.getModel();
+        
+        Object[] row = new Object[3];
+        produtosModel.setRowCount(0);
+        
+        try{
+            ProdutoDAO dao = new ProdutoDAO();
+            ArrayList<Produto> produtos = dao.getAll();
+            for(Produto p : produtos){
+                row[0] = p.getNome();
+                row[1] = p.getPreco();
+                row[2] = p.getEstoque();                
+                produtosModel.addRow(row);
+            }            
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
+    public void updateVendasTable(){
+        DefaultTableModel vendasModel = (DefaultTableModel) compraTable.getModel();
+        
+        Object[] row = new Object[3];
+        vendasModel.setRowCount(0);
+        try{
+            CompraDAO dao = new CompraDAO();
+            ArrayList<DisplayCompra> compras = dao.getDisplayList();
+            for(DisplayCompra c : compras){
+                row[0] = c.getComprador();
+                row[1] = c.getVendedor();                
+                row[2] = c.getValor();
+                vendasModel.addRow(row);
+            }           
+        } catch(SQLException e){
+            e.printStackTrace();
+        }        
     }
     
     public void updateClienteTable(){
@@ -392,41 +457,6 @@ public class Listagem extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_btn_exitMousePressed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Listagem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Listagem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Listagem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Listagem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Listagem().setVisible(true);
-            }
-        });
-    }
-    
         private void setColor(JPanel pane)
     {
         pane.setBackground(new Color(41,57,80));
@@ -446,7 +476,7 @@ public class Listagem extends javax.swing.JFrame {
         setColor(btn_4);         
         ind_4.setOpaque(true);                    
         resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
-        updateClienteTable();
+        initTables();
         super.setVisible(b);
     }
                                
@@ -470,6 +500,7 @@ public class Listagem extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable produtoTable;
     private javax.swing.JPanel side_pane;
     private javax.swing.JTable vendedorTable;

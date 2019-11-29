@@ -8,7 +8,10 @@ package DAO;
 import Model.Vendedor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -28,5 +31,19 @@ public class VendedorDAO {
         statement.setString(1, v.getNome());
         
         statement.execute();
+    }
+    
+    public ArrayList<Vendedor> getAll() throws SQLException{
+        ArrayList<Vendedor> vendedores = new ArrayList<>();
+        Statement statement = connection.createStatement();        
+        ResultSet result = statement.executeQuery("select * from vendedor");
+        
+        while(result.next()){            
+            String nome = result.getString("nome");            
+            Vendedor v = new Vendedor(nome);
+            v.setCodigo(result.getInt("codigo"));
+            vendedores.add(v);
+        }        
+        return vendedores;
     }
 }
