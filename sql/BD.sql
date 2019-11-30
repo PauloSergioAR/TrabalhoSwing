@@ -33,11 +33,11 @@ ALTER SEQUENCE public.vendedor_codigo_seq OWNED BY public.Vendedor.Codigo;
 CREATE SEQUENCE public.compra_id_seq;
 
 CREATE TABLE public.Compra (
+                Compra_id INTEGER NOT NULL DEFAULT nextval('public.compra_id_seq'),
                 idVendedor INTEGER NOT NULL,
                 CPF INTEGER NOT NULL,
-                Compra_id INTEGER NOT NULL DEFAULT nextval('public.compra_id_seq'),
                 Data DATE NOT NULL,
-                CONSTRAINT codigo_compra PRIMARY KEY (idVendedor, CPF, Compra_id)
+                CONSTRAINT codigo_compra PRIMARY KEY (Compra_id)
 );
 
 
@@ -48,11 +48,9 @@ CREATE SEQUENCE public.itemcompra_codigo_item_seq;
 CREATE TABLE public.ItemCompra (
                 Codigo_Item INTEGER NOT NULL DEFAULT nextval('public.itemcompra_codigo_item_seq'),
                 Codigo INTEGER NOT NULL,
-                idVendedor INTEGER NOT NULL,
-                CPF INTEGER NOT NULL,
                 Compra_id INTEGER NOT NULL,
                 Quantidade INTEGER NOT NULL,
-                CONSTRAINT codigo_item PRIMARY KEY (Codigo_Item, Codigo, idVendedor, CPF, Compra_id)
+                CONSTRAINT codigo_item PRIMARY KEY (Codigo_Item, Codigo, Compra_id)
 );
 
 
@@ -80,8 +78,8 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 ALTER TABLE public.ItemCompra ADD CONSTRAINT compra_itemcompra_fk
-FOREIGN KEY (idVendedor, CPF, Compra_id)
-REFERENCES public.Compra (idVendedor, CPF, Compra_id)
+FOREIGN KEY (Compra_id)
+REFERENCES public.Compra (Compra_id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
