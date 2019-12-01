@@ -86,6 +86,7 @@ public class Home extends javax.swing.JFrame {
     }
     
     private void initChart(){
+    	jTabbedPane1.removeAll();
         JFreeChart chart = ChartFactory.createBarChart("Melhores Vendedores", "Vendedor", "Vendas", createVendedorDataset());
         
         ChartPanel chartPanel = new ChartPanel(chart);
