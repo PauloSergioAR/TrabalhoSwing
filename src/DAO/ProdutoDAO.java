@@ -57,6 +57,7 @@ public class ProdutoDAO {
             String nome = result.getString("nome");
             float preco = result.getFloat("preco");
             Produto p = new Produto(nome, preco, estoque);
+            p.setCodigo(result.getInt("codigo_produto"));
             produtos.add(p);
         }
         
