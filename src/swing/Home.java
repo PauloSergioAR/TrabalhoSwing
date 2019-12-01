@@ -40,6 +40,113 @@ public class Home extends javax.swing.JFrame {
         resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});        
     }
 
+    private void homePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_homePressed
+        setColor(btn_1); 
+        ind_1.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
+        Navigator.navigate(Navigator.screens.HOME);
+    }//GEN-LAST:event_homePressed
+
+    private void registroPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registroPressed
+        setColor(btn_3); 
+        ind_3.setOpaque(true);
+        resetColor(new JPanel[]{btn_1,btn_4}, new JPanel[]{ind_1, ind_4});
+        Navigator.navigate(Navigator.screens.REGISTRO);
+    }//GEN-LAST:event_registroPressed
+
+    private void listagemPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listagemPressed
+        setColor(btn_4); 
+        ind_4.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_1}, new JPanel[]{ind_3, ind_1});
+        Navigator.navigate(Navigator.screens.LISTAGEM);
+    }//GEN-LAST:event_listagemPressed
+
+    int xx,xy;
+    private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed
+        xx = evt.getX();
+        xy = evt.getY();
+    }//GEN-LAST:event_jPanel2MousePressed
+
+    private void jPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        this.setLocation(x-xx,y-xy);
+    }//GEN-LAST:event_jPanel2MouseDragged
+
+    private void btn_exitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_exitMousePressed
+        System.exit(0);
+    }//GEN-LAST:event_btn_exitMousePressed
+
+    public void setVisible(boolean b){
+        initChart();
+        super.setVisible(b);
+        setColor(btn_1); 
+        ind_1.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
+    }
+    
+    private void initChart(){
+        JFreeChart chart = ChartFactory.createBarChart("Melhores Vendedores", "Vendedor", "Vendas", createVendedorDataset());
+        
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(560, 360));
+        jTabbedPane1.add("Melhor Vendedor", chartPanel);
+        
+        JFreeChart chart2 = ChartFactory.createBarChart("Melhores Produtos", "Produto", "Vendas", createProdutoDataset());
+        
+        ChartPanel chartPanel2 = new ChartPanel(chart2);
+        chartPanel.setPreferredSize(new Dimension(560, 360));
+        jTabbedPane1.add("Melhor Produto", chartPanel2);
+    }
+    
+    private CategoryDataset createVendedorDataset(){              
+        try{
+            VendedorDAO dao = new VendedorDAO();
+            ArrayList<MelhorVendedor> lista = dao.getMelhores();
+            
+            final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+            
+            for(MelhorVendedor v : lista){
+                dataset.addValue(v.getVendas(), v.getNome(), "Vendas");
+            }
+            return dataset;
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        return null;
+    }
+    
+    private CategoryDataset createProdutoDataset(){
+        try{
+            ProdutoDAO dao = new ProdutoDAO();
+            ArrayList<MelhorProduto> lista = dao.getMelhores();
+            
+            final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+            
+            for(MelhorProduto p: lista){
+                dataset.addValue(p.getVendas(), p.getNome(), "Vendas");
+            }
+            return dataset;
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        return null;
+    }
+    
+     private void setColor(JPanel pane){
+        pane.setBackground(new Color(41,57,80));
+    }
+    
+    private void resetColor(JPanel [] pane, JPanel [] indicators){
+        for(int i=0;i<pane.length;i++){
+           pane[i].setBackground(new Color(23,35,51));
+           
+        } for(int i=0;i<indicators.length;i++){
+           indicators[i].setOpaque(false);           
+        }        
+    }
+    
+    //Codigo gerado automaticamente pelo netbeans
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -272,117 +379,8 @@ public class Home extends javax.swing.JFrame {
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, 950, 540));
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void homePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_homePressed
-        setColor(btn_1); 
-        ind_1.setOpaque(true);
-        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
-        navigator.navigate(Navigator.screens.HOME);
-    }//GEN-LAST:event_homePressed
-
-    private void registroPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registroPressed
-        setColor(btn_3); 
-        ind_3.setOpaque(true);
-        resetColor(new JPanel[]{btn_1,btn_4}, new JPanel[]{ind_1, ind_4});
-        navigator.navigate(Navigator.screens.REGISTRO);
-    }//GEN-LAST:event_registroPressed
-
-    private void listagemPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listagemPressed
-        setColor(btn_4); 
-        ind_4.setOpaque(true);
-        resetColor(new JPanel[]{btn_3,btn_1}, new JPanel[]{ind_3, ind_1});
-        navigator.navigate(Navigator.screens.LISTAGEM);
-    }//GEN-LAST:event_listagemPressed
-
-    int xx,xy;
-    private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed
-        xx = evt.getX();
-        xy = evt.getY();
-    }//GEN-LAST:event_jPanel2MousePressed
-
-    private void jPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseDragged
-        int x = evt.getXOnScreen();
-        int y = evt.getYOnScreen();
-        this.setLocation(x-xx,y-xy);
-    }//GEN-LAST:event_jPanel2MouseDragged
-
-    private void btn_exitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_exitMousePressed
-        System.exit(0);
-    }//GEN-LAST:event_btn_exitMousePressed
-
-    public void setVisible(boolean b){
-        initChart();
-        super.setVisible(true);
-    }
+    }// </editor-fold>//GEN-END:initComponents   
     
-    private void initChart(){
-        JFreeChart chart = ChartFactory.createBarChart("Melhores Vendedores", "Vendedor", "Vendas", createVendedorDataset());
-        
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(560, 360));
-        jTabbedPane1.add("Melhor Vendedor", chartPanel);
-        
-        JFreeChart chart2 = ChartFactory.createBarChart("Melhores Produtos", "Produto", "Vendas", createProdutoDataset());
-        
-        ChartPanel chartPanel2 = new ChartPanel(chart2);
-        chartPanel.setPreferredSize(new Dimension(560, 360));
-        jTabbedPane1.add("Melhor Produto", chartPanel2);
-    }
-    
-    private CategoryDataset createVendedorDataset(){              
-        try{
-            VendedorDAO dao = new VendedorDAO();
-            ArrayList<MelhorVendedor> lista = dao.getMelhores();
-            
-            final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
-            
-            for(MelhorVendedor v : lista){
-                dataset.addValue(v.getVendas(), v.getNome(), "Vendas");
-            }
-            return dataset;
-        } catch (SQLException ex) {
-            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-        return null;
-    }
-    
-    private CategoryDataset createProdutoDataset(){
-        try{
-            ProdutoDAO dao = new ProdutoDAO();
-            ArrayList<MelhorProduto> lista = dao.getMelhores();
-            
-            final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
-            
-            for(MelhorProduto p: lista){
-                dataset.addValue(p.getVendas(), p.getNome(), "Vendas");
-            }
-            return dataset;
-        } catch (SQLException ex) {
-            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-        return null;
-    }
-    
-    /**
-     * @param args the command line arguments
-     */    
-     private void setColor(JPanel pane)
-    {
-        pane.setBackground(new Color(41,57,80));
-    }
-    
-    private void resetColor(JPanel [] pane, JPanel [] indicators)
-    {
-        for(int i=0;i<pane.length;i++){
-           pane[i].setBackground(new Color(23,35,51));
-           
-        } for(int i=0;i<indicators.length;i++){
-           indicators[i].setOpaque(false);           
-        }        
-    }
-    
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btn_1;
     private javax.swing.JPanel btn_3;

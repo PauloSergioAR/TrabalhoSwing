@@ -35,8 +35,7 @@ public class ItemCompraDAO {
         statement.setInt(3, ic.getQuantidade());
         
         ResultSet rs = statement.executeQuery();
-        rs.next();
-        System.out.println(rs.getInt("codigo_item"));
+        rs.next();        
     }
     
     public ArrayList<ItemCompra> getAll() throws SQLException{

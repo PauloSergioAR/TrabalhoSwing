@@ -62,11 +62,9 @@ public class CompraDAO {
             ResultSet resultc = compraStatement.executeQuery(
                     "select produto.preco, itemcompra.quantidade from produto, itemcompra " + 
                     "where itemcompra.compra_id = " + String.valueOf(compra_id) + 
-                    " and produto.codigo_produto = itemcompra.codigo");                                    
-            System.out.println("Aqui");
+                    " and produto.codigo_produto = itemcompra.codigo");                                                
                                     
-            while(resultc.next()){
-                System.out.println("Aqui");
+            while(resultc.next()){                
                 valor += resultc.getFloat("preco") * resultc.getFloat("quantidade");
             }
                         

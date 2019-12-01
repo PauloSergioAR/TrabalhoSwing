@@ -9,7 +9,6 @@ import Model.Cliente;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -47,5 +46,19 @@ public class ClienteDAO {
             clientes.add(c);
         }
         return clientes;
+    }
+    
+    public void update(Cliente c) throws SQLException{
+        Statement statement = connection.createStatement();
+        String sql = "update cliente set nome = '" + c.getNome() +
+                "' where cliente.cpf = " + c.getCPF();
+        
+        statement.execute(sql);
+    }
+    
+    public void excluir(Cliente c) throws SQLException{
+    	Statement statement = connection.createStatement();
+    	String sql = "delete from cliente where cliente.cpf = " + c.getCPF();
+    	statement.execute(sql);
     }
 }

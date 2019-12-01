@@ -36,12 +36,15 @@ public class Navigator {
         switch(screen){
             case HOME:
                 home.setVisible(false);
+                home.dispose();
                 break;
             case LISTAGEM:
                 listagem.setVisible(false);
+                listagem.dispose();
                 break;
             case REGISTRO:
                 registro.setVisible(false);
+                registro.dispose();
                 break;
             default: return;
         }                

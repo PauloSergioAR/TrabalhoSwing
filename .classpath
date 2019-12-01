@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="JavaApplication2/src"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="dist/lib/AbsoluteLayout.jar"/>
+	<classpathentry kind="lib" path="dist/lib/postgresql-42.2.5.jar"/>
+	<classpathentry kind="lib" path="dist/Swing_Inspire.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Paulo/Downloads/jfreechart-1.5.0.jar"/>
+	<classpathentry kind="output" path="JavaApplication2/build/classes"/>
+</classpath>

@@ -14,28 +14,401 @@ import Model.Compra;
 import Model.DisplayCompra;
 import Model.Produto;
 import Model.Vendedor;
+import Util.TableMouseListener;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Paulo
  */
-public class Listagem extends javax.swing.JFrame {
-    private Navigator navigator;
+public class Listagem extends javax.swing.JFrame {       
+    private JMenuItem vendedorUpdate;
+    private JMenuItem vendedorRemove;
+    private JPopupMenu vendedorMenu;
+    
+    private JMenuItem compradorUpdate;
+    private JMenuItem compradorRemove;
+    private JPopupMenu compradorMenu;
+    
+    private JMenuItem produtoUpdate;
+    private JMenuItem produtoRemove;
+    private JPopupMenu produtoMenu;
+    
+    ArrayList<Cliente> clientes;
+    ArrayList<Produto> produtos;
+    ArrayList<Vendedor> vendedores;
+    
+    int xx,xy; 
+    
     /**
      * Creates new form Listagem
      */
-    public Listagem() {
-        navigator = Navigator.getInstance();
+    public Listagem() {    	        
         initComponents();
         initTables();
+        
+        setColor(btn_4);
+        ind_4.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_1}, new JPanel[]{ind_3, ind_1});
     }
 
+    private void initTables(){
+        updateVendasTable();
+        updateClienteTable();
+        updateProdutosTable();
+        updateVendedoresTable();
+        initVendedorPopup();
+        initCompradorPopup();
+        initProdutoPopup();
+    }
+    
+    private void initCompradorPopup(){        
+        compradorMenu = new JPopupMenu();
+        compradorRemove = new JMenuItem("Deletar");
+        compradorUpdate = new JMenuItem("Editar");
+        
+        compradorRemove.addActionListener((ActionEvent e) -> {
+        	int index = clienteTable.getSelectedRow();
+            try {
+            	ClienteDAO dao = new ClienteDAO();
+            	
+            	dao.excluir(clientes.get(index));
+            	JOptionPane.showMessageDialog(null, "Cliente excluido com sucesso");
+            	initTables();
+            	
+            }catch (SQLException ex) {
+            	ex.printStackTrace();
+            	JOptionPane.showMessageDialog(null, "Erro ao excluir cliente");
+			}
+        });
+        
+        compradorUpdate.addActionListener((ActionEvent e) -> {
+            JTextField nome = new JTextField("", 15);            
+            
+            JLabel labelNome =  new JLabel("Nome: ");            
+            JPanel dialogPanel = new JPanel(new GridBagLayout());
+            
+            GridBagConstraints gbc = new GridBagConstraints();
+            
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            
+            dialogPanel.add(labelNome, gbc);
+            gbc.gridx++;
+            dialogPanel.add(nome, gbc);
+                     
+            
+            int result = JOptionPane.showConfirmDialog(null, dialogPanel, "Editar Cliente", JOptionPane.OK_CANCEL_OPTION);
+            
+            if(result == JOptionPane.OK_OPTION){
+                try{
+                    ClienteDAO dao = new ClienteDAO();
+                    int index = clienteTable.getSelectedRow();
+                    Cliente old = clientes.get(index);
+                    Cliente c = new Cliente(nome.getText(), old.getCPF());
+                    dao.update(c);
+                    initTables();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao editar cliente");
+                    Logger.getLogger(Listagem.class.getName()).log(Level.SEVERE, null, ex);
+                }                
+            }
+        });
+        
+        compradorMenu.add(compradorRemove);
+        compradorMenu.add(compradorUpdate);
+        
+        clienteTable.addMouseListener(new TableMouseListener(clienteTable));
+        clienteTable.setComponentPopupMenu(compradorMenu);
+    }
+    
+    private void initProdutoPopup(){
+        produtoMenu = new JPopupMenu();
+        produtoRemove = new JMenuItem("Deletar");
+        produtoUpdate = new JMenuItem("Editar");
+        
+        produtoRemove.addActionListener((ActionEvent e) -> {
+        	int index = produtoTable.getSelectedRow();
+            try {
+            	ProdutoDAO dao = new ProdutoDAO();
+            	
+            	dao.excluir(produtos.get(index));
+            	JOptionPane.showMessageDialog(null, "Produto excluido com sucesso");
+            	initTables();
+            	
+            }catch (SQLException ex) {
+            	ex.printStackTrace();
+            	JOptionPane.showMessageDialog(null, "Erro ao excluir produto");
+			}
+        });
+        
+        produtoUpdate.addActionListener((ActionEvent e) -> {
+            JTextField nome = new JTextField("", 15);
+            JTextField valor = new JTextField("", 15);
+            JTextField estoque = new JTextField("", 15);
+            
+            JLabel labelNome =  new JLabel("Nome: ");
+            JLabel labelValor =  new JLabel("Valor: ");
+            JLabel labelEstoque =  new JLabel("Estoque:");
+            JPanel dialogPanel = new JPanel(new GridBagLayout());
+            
+            GridBagConstraints gbc = new GridBagConstraints();
+            
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            
+            dialogPanel.add(labelNome, gbc);
+            gbc.gridx++;
+            dialogPanel.add(nome, gbc);
+            
+            gbc.gridy++;
+            gbc.gridx--;
+            
+            dialogPanel.add(labelValor, gbc);
+            gbc.gridx++;
+            dialogPanel.add(valor, gbc);
+            
+            gbc.gridy++;
+            gbc.gridx--;
+            
+            dialogPanel.add(labelEstoque, gbc);
+            gbc.gridx++;
+            dialogPanel.add(estoque, gbc);
+            
+            int result = JOptionPane.showConfirmDialog(null, dialogPanel, "Editar Produto", JOptionPane.OK_CANCEL_OPTION);
+            
+            if(result == JOptionPane.OK_OPTION){
+                 try{
+                    ProdutoDAO dao = new ProdutoDAO();
+                    int index = produtoTable.getSelectedRow();
+                    Produto old = produtos.get(index);
+                    Produto c = new Produto(nome.getText(), Float.parseFloat(valor.getText()), Integer.parseInt(estoque.getText()));
+                    
+                    c.setCodigo(old.getCodigo());                    
+                    
+                    dao.update(c);
+                    initTables();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao editar produto");
+                    Logger.getLogger(Listagem.class.getName()).log(Level.SEVERE, null, ex);
+                }                            
+            }
+        });
+        
+        produtoMenu.add(produtoRemove);
+        produtoMenu.add(produtoUpdate);
+        
+        produtoTable.addMouseListener(new TableMouseListener(produtoTable));
+        produtoTable.setComponentPopupMenu(produtoMenu);
+    }
+    
+    private void initVendedorPopup(){        
+        vendedorMenu = new JPopupMenu();
+        vendedorRemove = new JMenuItem("Deletar");
+        vendedorUpdate = new JMenuItem("Editar");
+        
+        vendedorRemove.addActionListener((ActionEvent e) -> {
+            int index = vendedorTable.getSelectedRow();
+            try {
+            	VendedorDAO dao = new VendedorDAO();
+            	
+            	dao.excluir(vendedores.get(index));
+            	JOptionPane.showMessageDialog(null, "Vendedor excluido com sucesso");
+            	initTables();
+            	
+            }catch (SQLException ex) {
+            	ex.printStackTrace();
+            	JOptionPane.showMessageDialog(null, "Erro ao excluir vendedor");
+			}
+        });
+        
+        vendedorUpdate.addActionListener((ActionEvent e) -> {
+            JTextField nome = new JTextField("", 30);
+            
+            JLabel labelNome =  new JLabel("Nome:");
+            JPanel dialogPanel = new JPanel();
+            
+            dialogPanel.add(labelNome);
+            dialogPanel.add(nome);
+            
+            int result = JOptionPane.showConfirmDialog(null, dialogPanel, "Editar Vendedor", JOptionPane.OK_CANCEL_OPTION);
+            
+            if(result == JOptionPane.OK_OPTION){
+                try{
+                    VendedorDAO dao = new VendedorDAO();
+                    int index = vendedorTable.getSelectedRow();
+                    
+                    Vendedor old = vendedores.get(index);
+                    Vendedor v = new Vendedor(nome.getText());
+                    v.setCodigo(old.getCodigo());
+                    
+                    dao.update(v);
+                    initTables();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao editar vendedor");
+                    ex.printStackTrace();
+                }                
+            }
+        });
+        
+        vendedorMenu.add(vendedorRemove);
+        vendedorMenu.add(vendedorUpdate);
+        
+        vendedorTable.addMouseListener(new TableMouseListener(vendedorTable));
+        vendedorTable.setComponentPopupMenu(vendedorMenu);
+    }
+    
+    public void updateVendedoresTable(){
+        DefaultTableModel vendedoresModel = (DefaultTableModel) vendedorTable.getModel();
+        
+        Object[] row = new Object[2];
+        vendedoresModel.setRowCount(0);
+        
+        try{
+            VendedorDAO dao = new VendedorDAO();
+            vendedores = dao.getAll();
+            for(Vendedor v : vendedores){
+                row[0] = v.getNome();
+                row[1] = v.getCodigo();                
+                vendedoresModel.addRow(row);
+            }            
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
+    public void updateProdutosTable(){
+        DefaultTableModel produtosModel = (DefaultTableModel) produtoTable.getModel();
+        
+        Object[] row = new Object[3];
+        produtosModel.setRowCount(0);
+        
+        try{
+            ProdutoDAO dao = new ProdutoDAO();
+            produtos = dao.getAll();
+            for(Produto p : produtos){
+                row[0] = p.getNome();
+                row[1] = p.getPreco();
+                row[2] = p.getEstoque();                
+                produtosModel.addRow(row);
+            }            
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
+    public void updateVendasTable(){
+        DefaultTableModel vendasModel = (DefaultTableModel) compraTable.getModel();
+        
+        Object[] row = new Object[3];
+        vendasModel.setRowCount(0);
+        try{
+            CompraDAO dao = new CompraDAO();
+            ArrayList<DisplayCompra> compras = dao.getDisplayList();
+            for(DisplayCompra c : compras){
+                row[0] = c.getComprador();
+                row[1] = c.getVendedor();                
+                row[2] = c.getValor();
+                vendasModel.addRow(row);
+            }           
+        } catch(SQLException e){
+            e.printStackTrace();
+        }        
+    }
+    
+    public void updateClienteTable(){
+        DefaultTableModel clientemodel = (DefaultTableModel) clienteTable.getModel();
+        Object[] row = new Object[2];
+        clientemodel.setRowCount(0);
+        try{
+            ClienteDAO dao = new ClienteDAO();
+            clientes = dao.getAll();
+            for(Cliente c : clientes){
+                row[0] = c.getNome();
+                row[1] = c.getCPF();                
+                clientemodel.addRow(row);
+            }            
+        } catch(SQLException e){
+            e.printStackTrace();
+        }        
+    }
+    
+    private void btn_1homePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_1homePressed
+        setColor(btn_1);
+        ind_1.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
+        Navigator.navigate(Navigator.screens.HOME);
+    }//GEN-LAST:event_btn_1homePressed
+
+    private void btn_3registroPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_3registroPressed
+        setColor(btn_3);
+        ind_3.setOpaque(true);
+        resetColor(new JPanel[]{btn_1,btn_4}, new JPanel[]{ind_1, ind_4});
+        Navigator.navigate(Navigator.screens.REGISTRO);
+    }//GEN-LAST:event_btn_3registroPressed
+
+    private void btn_4listagemPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_4listagemPressed    	    	    
+        setColor(btn_4);
+        ind_4.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_1}, new JPanel[]{ind_3, ind_1});
+        Navigator.navigate(Navigator.screens.LISTAGEM);
+    }//GEN-LAST:event_btn_4listagemPressed
+
+    private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed
+        xx = evt.getX();
+        xy = evt.getY();
+    }//GEN-LAST:event_jPanel2MousePressed
+
+    private void jPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        this.setLocation(x-xx,y-xy);
+    }//GEN-LAST:event_jPanel2MouseDragged
+
+    private void btn_exitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_exitMousePressed
+        System.exit(0);
+    }//GEN-LAST:event_btn_exitMousePressed
+
+        private void setColor(JPanel pane)
+    {
+        pane.setBackground(new Color(41,57,80));
+    }
+    
+    private void resetColor(JPanel [] pane, JPanel [] indicators)
+    {
+        for(int i=0;i<pane.length;i++){
+           pane[i].setBackground(new Color(23,35,51));
+           
+        } for(int i=0;i<indicators.length;i++){
+           indicators[i].setOpaque(false);           
+        }        
+    }
+    
+    public void setVisible(boolean b){                
+        initTables();
+        super.setVisible(b);
+        setColor(btn_4);
+        ind_4.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_1}, new JPanel[]{ind_3, ind_1});
+    }
+    
+    
+    //Codigo gerado automaticamente pelo netbeans
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -338,149 +711,7 @@ public class Listagem extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-            
-    private void initTables(){
-        updateVendasTable();
-        updateClienteTable();
-        updateProdutosTable();
-        updateVendedoresTable();        
-    }
-    
-    public void updateVendedoresTable(){
-        DefaultTableModel vendedoresModel = (DefaultTableModel) vendedorTable.getModel();
-        
-        Object[] row = new Object[2];
-        vendedoresModel.setRowCount(0);
-        
-        try{
-            VendedorDAO dao = new VendedorDAO();
-            ArrayList<Vendedor> vendedores = dao.getAll();
-            for(Vendedor v : vendedores){
-                row[0] = v.getNome();
-                row[1] = v.getCodigo();                
-                vendedoresModel.addRow(row);
-            }            
-        } catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
-    
-    public void updateProdutosTable(){
-        DefaultTableModel produtosModel = (DefaultTableModel) produtoTable.getModel();
-        
-        Object[] row = new Object[3];
-        produtosModel.setRowCount(0);
-        
-        try{
-            ProdutoDAO dao = new ProdutoDAO();
-            ArrayList<Produto> produtos = dao.getAll();
-            for(Produto p : produtos){
-                row[0] = p.getNome();
-                row[1] = p.getPreco();
-                row[2] = p.getEstoque();                
-                produtosModel.addRow(row);
-            }            
-        } catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
-    
-    public void updateVendasTable(){
-        DefaultTableModel vendasModel = (DefaultTableModel) compraTable.getModel();
-        
-        Object[] row = new Object[3];
-        vendasModel.setRowCount(0);
-        try{
-            CompraDAO dao = new CompraDAO();
-            ArrayList<DisplayCompra> compras = dao.getDisplayList();
-            for(DisplayCompra c : compras){
-                row[0] = c.getComprador();
-                row[1] = c.getVendedor();                
-                row[2] = c.getValor();
-                vendasModel.addRow(row);
-            }           
-        } catch(SQLException e){
-            e.printStackTrace();
-        }        
-    }
-    
-    public void updateClienteTable(){
-        DefaultTableModel clientemodel = (DefaultTableModel) clienteTable.getModel();
-        Object[] row = new Object[2];
-        clientemodel.setRowCount(0);
-        try{
-            ClienteDAO dao = new ClienteDAO();
-            ArrayList<Cliente> clientes = dao.getAll();
-            for(Cliente c : clientes){
-                row[0] = c.getNome();
-                row[1] = c.getCPF();                
-                clientemodel.addRow(row);
-            }            
-        } catch(SQLException e){
-            e.printStackTrace();
-        }        
-    }
-    
-    private void btn_1homePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_1homePressed
-        setColor(btn_1);
-        ind_1.setOpaque(true);
-        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
-        navigator.navigate(Navigator.screens.HOME);
-    }//GEN-LAST:event_btn_1homePressed
-
-    private void btn_3registroPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_3registroPressed
-        setColor(btn_3);
-        ind_3.setOpaque(true);
-        resetColor(new JPanel[]{btn_1,btn_4}, new JPanel[]{ind_1, ind_4});
-        navigator.navigate(Navigator.screens.REGISTRO);
-    }//GEN-LAST:event_btn_3registroPressed
-
-    private void btn_4listagemPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_4listagemPressed
-        setColor(btn_4);
-        ind_4.setOpaque(true);
-        resetColor(new JPanel[]{btn_3,btn_1}, new JPanel[]{ind_3, ind_1});
-        navigator.navigate(Navigator.screens.LISTAGEM);
-    }//GEN-LAST:event_btn_4listagemPressed
-
-    private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed
-        xx = evt.getX();
-        xy = evt.getY();
-    }//GEN-LAST:event_jPanel2MousePressed
-
-    private void jPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseDragged
-        int x = evt.getXOnScreen();
-        int y = evt.getYOnScreen();
-        this.setLocation(x-xx,y-xy);
-    }//GEN-LAST:event_jPanel2MouseDragged
-
-    private void btn_exitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_exitMousePressed
-        System.exit(0);
-    }//GEN-LAST:event_btn_exitMousePressed
-
-        private void setColor(JPanel pane)
-    {
-        pane.setBackground(new Color(41,57,80));
-    }
-    
-    private void resetColor(JPanel [] pane, JPanel [] indicators)
-    {
-        for(int i=0;i<pane.length;i++){
-           pane[i].setBackground(new Color(23,35,51));
-           
-        } for(int i=0;i<indicators.length;i++){
-           indicators[i].setOpaque(false);           
-        }        
-    }
-    
-    public void setVisible(boolean b){        
-        setColor(btn_4);         
-        ind_4.setOpaque(true);                    
-        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
-        initTables();
-        super.setVisible(b);
-    }
-                               
-    int xx,xy; 
+                                               
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btn_1;
     private javax.swing.JPanel btn_3;

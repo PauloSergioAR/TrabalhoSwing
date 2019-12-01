@@ -20,10 +20,6 @@ public class Produto {
         this.preco = preco;
         this.estoque = estoque;        
     }
-
-    public Produto() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
     public Integer getCodigo() {
         return codigo;
@@ -32,17 +28,28 @@ public class Produto {
     public void setCodigo(Integer codigo) {
         this.codigo = codigo;
     }
-    
-     public String getNome() {
+
+    public String getNome() {
         return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public float getPreco() {
         return preco;
     }
 
+    public void setPreco(float preco) {
+        this.preco = preco;
+    }
+
     public Integer getEstoque() {
         return estoque;
     }
-    
+
+    public void setEstoque(Integer estoque) {
+        this.estoque = estoque;
+    }  
 }
