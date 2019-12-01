@@ -18,14 +18,13 @@ import Model.Vendedor;
 import java.awt.Color;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -34,19 +33,218 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Registro extends javax.swing.JFrame {
     private ArrayList<ItemCompra> itens = new ArrayList<>();
-    private ArrayList<Produto> produtos;
-    private Navigator navigator;
+    private ArrayList<Produto> produtos;    
     /**
      * Creates new form Registro
      */
-    public Registro() {
-        navigator = Navigator.getInstance();        
+    public Registro() {               
         initComponents();
         setColor(btn_3); 
         ind_3.setOpaque(true);
-        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4}); 
+        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
+        
+        jTabbedPane1.addChangeListener((ChangeEvent e) -> {
+        	if(jTabbedPane1.getSelectedIndex() == 3) {
+        		updateCombobox();
+        	}
+        });
+    }
+    
+    private void btn_1homePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_1homePressed
+        setColor(btn_1);
+        ind_1.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
+        Navigator.navigate(Navigator.screens.HOME);
+    }//GEN-LAST:event_btn_1homePressed
+
+    private void btn_3registroPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_3registroPressed
+        setColor(btn_3);
+        ind_3.setOpaque(true);
+        resetColor(new JPanel[]{btn_1,btn_4}, new JPanel[]{ind_1, ind_4});
+        Navigator.navigate(Navigator.screens.REGISTRO);
+    }//GEN-LAST:event_btn_3registroPressed
+
+    private void btn_4listagemPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_4listagemPressed
+        setColor(btn_4);
+        ind_4.setOpaque(true);
+        resetColor(new JPanel[]{btn_3,btn_1}, new JPanel[]{ind_3, ind_1});
+        Navigator.navigate(Navigator.screens.LISTAGEM);
+    }//GEN-LAST:event_btn_4listagemPressed
+
+    private void btn_exitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_exitMousePressed
+        System.exit(0);
+    }//GEN-LAST:event_btn_exitMousePressed
+
+    private void jPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        this.setLocation(x-xx,y-xy);
+    }//GEN-LAST:event_jPanel2MouseDragged
+
+    private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed
+        xx = evt.getX();
+        xy = evt.getY();
+    }//GEN-LAST:event_jPanel2MousePressed
+
+    private void produtoOkClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_produtoOkClicked
+        String nome = Produto_Nome.getText();
+        Float preco = Float.parseFloat(Preco.getText());
+        Integer estoque = Integer.parseInt(Estoque.getText());
+        
+        if(nome != null && preco != null && estoque != null){
+            Produto produto = new Produto(nome, preco, estoque);
+            
+            try{
+              ProdutoDAO dao = new ProdutoDAO();
+              dao.insert(produto);
+              
+              JOptionPane.showMessageDialog(null, "Produto " + produto.getNome() +  " salvo com sucesso!");
+              Produto_Nome.setText("");
+              Preco.setText("");
+              Estoque.setText("");
+            } catch(SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro ao salvar o produto!");
+            }
+        }
+    }//GEN-LAST:event_produtoOkClicked
+
+    private void clienteOkClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clienteOkClicked
+        if((Cliente_Nome.getText() != null && Cliente_Nome.getText() != "") 
+                && CPFField.getText() != null && CPFField.getText() != ""){
+            Cliente cliente = new Cliente(Cliente_Nome.getText(), Integer.parseInt(CPFField.getText()));
+            
+            try{
+                ClienteDAO dao = new ClienteDAO();
+                dao.insert(cliente);
+                
+                JOptionPane.showMessageDialog(null, "Cliente " + cliente.getNome() +  " salvo com sucesso!");
+                Cliente_Nome.setText("");
+                CPFField.setText("");
+            } catch(SQLException e){
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro ao salvar o cliente!");
+            }
+        }
+    }//GEN-LAST:event_clienteOkClicked
+
+    private void vendedorOkCLicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vendedorOkCLicked
+        if(Vendedor_Nome.getText() != null && Vendedor_Nome.getText() != ""){
+            Vendedor vendedor = new Vendedor(Vendedor_Nome.getText());
+            
+            try{
+                VendedorDAO dao = new VendedorDAO();
+                dao.insert(vendedor);
+                
+                JOptionPane.showMessageDialog(null, "Vendedor " + vendedor.getNome() +  " salvo com sucesso!");
+                Vendedor_Nome.setText("");
+                   
+            } catch(SQLException e){
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro ao salvar o vendedor!");
+            }
+        }                
+    }//GEN-LAST:event_vendedorOkCLicked
+
+    private void compraOkClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_compraOkClicked
+        try{
+            CompraDAO dao = new CompraDAO();
+            ItemCompraDAO icDAO = new ItemCompraDAO();
+            int cod_vendedor = Integer.parseInt(cod_vendedor_compra.getText());
+            int cpf_comprador = Integer.parseInt( cpf_comprador_compra.getText());
+            java.sql.Date data = new java.sql.Date(new java.util.Date().getTime());
+            
+            Compra c = new Compra(cod_vendedor, cpf_comprador, data);
+            
+            int codigo_compra = dao.insert(c);
+            
+            for(ItemCompra ic : itens){
+                ic.setCompra_Id(codigo_compra);                
+                icDAO.insert(ic);
+            }
+            cod_vendedor_compra.setText("");
+            cpf_comprador_compra.setText("");
+            
+            DefaultTableModel model = (DefaultTableModel) tabela_produtos_compra.getModel();
+            model.setRowCount(0);
+            itens.clear();
+            
+            
+            JOptionPane.showMessageDialog(null, "Compra salva com sucesso!");
+        } catch (SQLException ex) {
+        	JOptionPane.showMessageDialog(null, "Erro ao salvar compra!");
+            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_compraOkClicked
+
+    private void produtoAddClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_produtoAddClicked
+        ItemCompra item = new ItemCompra();        
+        int index = combo_produto.getSelectedIndex();
+        
+        item.setCodigo_produto(produtos.get(index).getCodigo());
+        item.setQuantidade(Integer.parseInt(field_item_quantidade.getText()));
+        item.setNome(produtos.get(index).getNome());
+        
+        this.itens.add(item);
+
+        DefaultTableModel model = (DefaultTableModel) tabela_produtos_compra.getModel();
+        
+        Object[] row = new Object[2];
+        model.setRowCount(0);
+        
+        for(ItemCompra i : itens){
+            row[0] = i.getNome();
+            row[1] = i.getQuantidade();
+            model.addRow(row);
+        }
+        
+        field_item_quantidade.setText("");        
+    }//GEN-LAST:event_produtoAddClicked
+
+    int xx,xy;
+    
+    private void updateCombobox() {
+    	JComboBox combo = this.combo_produto;
+        try{
+            ProdutoDAO dao = new ProdutoDAO();
+            produtos = dao.getAll();
+            Object[] nomes = new Object[produtos.size()];            
+            
+            for(int i = 0 ; i < produtos.size(); i++){
+                nomes[i] = produtos.get(i).getNome();
+            }
+            
+            combo.setModel(new DefaultComboBoxModel(nomes));
+        } catch (SQLException ex) {
+            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+    }       
+    
+    public void setVisible(boolean b){
+    	updateCombobox();
+        super.setVisible(b);
+        
+        setColor(btn_3);
+        ind_3.setOpaque(true);
+        resetColor(new JPanel[]{btn_1,btn_4}, new JPanel[]{ind_1, ind_4});
+    }
+    
+    private void setColor(JPanel pane){
+        pane.setBackground(new Color(41,57,80));
+    }
+    
+    private void resetColor(JPanel [] pane, JPanel [] indicators){
+        for(int i=0;i<pane.length;i++){
+           pane[i].setBackground(new Color(23,35,51));
+           
+        } for(int i=0;i<indicators.length;i++){
+           indicators[i].setOpaque(false);           
+        }        
     }
 
+    
+    //Codigo gerado automaticamente pelo netbeans
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -138,12 +336,7 @@ public class Registro extends javax.swing.JFrame {
         jScrollPane5.setViewportView(Cliente_Nome1);
 
         jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_checkmark_24px.png"))); // NOI18N
-        jLabel14.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel14clienteOkClicked(evt);
-            }
-        });
-
+        
         jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel15.setText("CPF");
 
@@ -624,12 +817,7 @@ public class Registro extends javax.swing.JFrame {
         field_item_quantidade.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jScrollPane18.setViewportView(field_item_quantidade);
 
-        combo_produto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        combo_produto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_produtoActionPerformed(evt);
-            }
-        });
+        combo_produto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));        
 
         jLabel36.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel36.setText("Quantidade:");
@@ -782,185 +970,7 @@ public class Registro extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btn_1homePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_1homePressed
-        setColor(btn_1);
-        ind_1.setOpaque(true);
-        resetColor(new JPanel[]{btn_3,btn_4}, new JPanel[]{ind_3, ind_4});
-        navigator.navigate(Navigator.screens.HOME);
-    }//GEN-LAST:event_btn_1homePressed
-
-    private void btn_3registroPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_3registroPressed
-        setColor(btn_3);
-        ind_3.setOpaque(true);
-        resetColor(new JPanel[]{btn_1,btn_4}, new JPanel[]{ind_1, ind_4});
-        navigator.navigate(Navigator.screens.REGISTRO);
-    }//GEN-LAST:event_btn_3registroPressed
-
-    private void btn_4listagemPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_4listagemPressed
-        setColor(btn_4);
-        ind_4.setOpaque(true);
-        resetColor(new JPanel[]{btn_3,btn_1}, new JPanel[]{ind_3, ind_1});
-        navigator.navigate(Navigator.screens.LISTAGEM);
-    }//GEN-LAST:event_btn_4listagemPressed
-
-    private void btn_exitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_exitMousePressed
-        System.exit(0);
-    }//GEN-LAST:event_btn_exitMousePressed
-
-    private void jPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseDragged
-        int x = evt.getXOnScreen();
-        int y = evt.getYOnScreen();
-        this.setLocation(x-xx,y-xy);
-    }//GEN-LAST:event_jPanel2MouseDragged
-
-    private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed
-        xx = evt.getX();
-        xy = evt.getY();
-    }//GEN-LAST:event_jPanel2MousePressed
-
-    private void jLabel14clienteOkClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel14clienteOkClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jLabel14clienteOkClicked
-
-    private void produtoOkClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_produtoOkClicked
-        String nome = Produto_Nome.getText();
-        Float preco = Float.parseFloat(Preco.getText());
-        Integer estoque = Integer.parseInt(Estoque.getText());
-        
-        if(nome != null && preco != null && estoque != null){
-            Produto produto = new Produto(nome, preco, estoque);
-            
-            try{
-              ProdutoDAO dao = new ProdutoDAO();
-              dao.insert(produto);
-              
-              JOptionPane.showMessageDialog(null, "Produto " + produto.getNome() +  " salvo com sucesso!");
-            } catch(SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Erro ao salvar o produto!");
-            }
-        }
-    }//GEN-LAST:event_produtoOkClicked
-
-    private void clienteOkClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clienteOkClicked
-        if((Cliente_Nome.getText() != null && Cliente_Nome.getText() != "") 
-                && CPFField.getText() != null && CPFField.getText() != ""){
-            Cliente cliente = new Cliente(Cliente_Nome.getText(), Integer.parseInt(CPFField.getText()));
-            
-            try{
-                ClienteDAO dao = new ClienteDAO();
-                dao.insert(cliente);
-                
-                JOptionPane.showMessageDialog(null, "Cliente " + cliente.getNome() +  "salvo com sucesso!");
-            } catch(SQLException e){
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Erro ao salvar o cliente!");
-            }
-        }
-    }//GEN-LAST:event_clienteOkClicked
-
-    private void vendedorOkCLicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vendedorOkCLicked
-        if(Vendedor_Nome.getText() != null && Vendedor_Nome.getText() != ""){
-            Vendedor vendedor = new Vendedor(Vendedor_Nome.getText());
-            
-            try{
-                VendedorDAO dao = new VendedorDAO();
-                dao.insert(vendedor);
-                
-                JOptionPane.showMessageDialog(null, "Vendedor " + vendedor.getNome() +  "salvo com sucesso!");
-                   
-            } catch(SQLException e){
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Erro ao salvar o vendedor!");
-            }
-        }                
-    }//GEN-LAST:event_vendedorOkCLicked
-
-    private void combo_produtoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_produtoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_combo_produtoActionPerformed
-
-    private void compraOkClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_compraOkClicked
-        try{
-            CompraDAO dao = new CompraDAO();
-            ItemCompraDAO icDAO = new ItemCompraDAO();
-            int cod_vendedor = Integer.parseInt(cod_vendedor_compra.getText());
-            int cpf_comprador = Integer.parseInt( cpf_comprador_compra.getText());
-            java.sql.Date data = new java.sql.Date(new java.util.Date().getTime());
-            
-            Compra c = new Compra(cod_vendedor, cpf_comprador, data);
-            
-            int codigo_compra = dao.insert(c);
-            
-            for(ItemCompra ic : itens){
-                ic.setCompra_Id(codigo_compra);                
-                icDAO.insert(ic);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_compraOkClicked
-
-    private void produtoAddClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_produtoAddClicked
-        ItemCompra item = new ItemCompra();
-        System.out.println(produtos.get(combo_produto.getSelectedIndex()).getCodigo());
-        int index = combo_produto.getSelectedIndex();
-        
-        item.setCodigo_produto(produtos.get(index).getCodigo());
-        //compra id vai ser setado depois
-        item.setQuantidade(Integer.parseInt(field_item_quantidade.getText()));
-        item.setNome(produtos.get(index).getNome());
-        
-        this.itens.add(item);
-
-        DefaultTableModel model = (DefaultTableModel) tabela_produtos_compra.getModel();
-        
-        Object[] row = new Object[2];
-        model.setRowCount(0);
-        
-        for(ItemCompra i : itens){
-            row[0] = i.getNome();
-            row[1] = i.getQuantidade();
-            model.addRow(row);
-        }
-    }//GEN-LAST:event_produtoAddClicked
-
-    int xx,xy;
-    
-    public void setVisible(boolean b){
-        JComboBox combo = this.combo_produto;
-        try{
-            ProdutoDAO dao = new ProdutoDAO();
-            produtos = dao.getAll();
-            Object[] nomes = new Object[produtos.size()];            
-            
-            for(int i = 0 ; i < produtos.size(); i++){
-                nomes[i] = produtos.get(i).getNome();
-            }
-            
-            combo.setModel(new DefaultComboBoxModel(nomes));
-        } catch (SQLException ex) {
-            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        super.setVisible(b);
-    }
-    
-    private void setColor(JPanel pane){
-        pane.setBackground(new Color(41,57,80));
-    }
-    
-    private void resetColor(JPanel [] pane, JPanel [] indicators){
-        for(int i=0;i<pane.length;i++){
-           pane[i].setBackground(new Color(23,35,51));
-           
-        } for(int i=0;i<indicators.length;i++){
-           indicators[i].setOpaque(false);           
-        }        
-    }
-       
+    }// </editor-fold>//GEN-END:initComponents          
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextPane CPFField;

@@ -20,10 +20,6 @@ public class Produto {
         this.preco = preco;
         this.estoque = estoque;        
     }
-
-    public Produto() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
     public Integer getCodigo() {
         return codigo;

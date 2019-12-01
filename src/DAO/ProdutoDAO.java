@@ -88,9 +88,14 @@ public class ProdutoDAO {
                 " set nome = '" + p.getNome() +
                 "', preco = " + p.getPreco() + 
                 ", estoque = " + p.getEstoque() + 
-                " where produto.codigo_produto = " + p.getCodigo();
-        System.out.println(sql);
+                " where produto.codigo_produto = " + p.getCodigo();        
         statement.execute(sql);
+    }
+    
+    public void excluir(Produto p) throws SQLException{
+    	Statement statement = connection.createStatement();
+    	String sql = "delete from produto where codigo_produto = " + p.getCodigo();
+    	statement.execute(sql);
     }
 }
 

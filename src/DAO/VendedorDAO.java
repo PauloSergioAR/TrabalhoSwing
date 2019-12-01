@@ -75,4 +75,10 @@ public class VendedorDAO {
         
         statement.execute(sql);
     }
+    
+    public void excluir(Vendedor v) throws SQLException{
+    	Statement statement = connection.createStatement();
+    	String sql = "delete from vendedor where vendedor.codigo = " + v.getCodigo();
+    	statement.execute(sql);
+    }
 }

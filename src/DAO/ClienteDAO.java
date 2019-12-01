@@ -55,4 +55,10 @@ public class ClienteDAO {
         
         statement.execute(sql);
     }
+    
+    public void excluir(Cliente c) throws SQLException{
+    	Statement statement = connection.createStatement();
+    	String sql = "delete from cliente where cliente.cpf = " + c.getCPF();
+    	statement.execute(sql);
+    }
 }

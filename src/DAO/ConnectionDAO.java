@@ -19,7 +19,7 @@ public class ConnectionDAO {
     private static final String PASSWORD = "123";
     
     public static Connection getConnection() throws SQLException{
-        String url = "jdbc:postgresql://localhost/database5";
+        String url = "jdbc:postgresql://localhost/database6";
         
         Properties properties = new Properties();
         properties.setProperty("user", USER);
