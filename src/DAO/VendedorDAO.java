@@ -67,4 +67,12 @@ public class VendedorDAO {
         }
         return lista;
     }
+    
+    public void update(Vendedor v) throws SQLException{
+        Statement statement = connection.createStatement();
+        String sql = "update vendedor set nome = '" + v.getNome() +
+                "' where vendedor.codigo = " + v.getCodigo();
+        
+        statement.execute(sql);
+    }
 }

@@ -81,6 +81,17 @@ public class ProdutoDAO {
         }
         return lista;
     }
+    
+    public void update(Produto p) throws SQLException{
+        Statement statement = connection.createStatement();
+        String sql = "update produto" + 
+                " set nome = '" + p.getNome() +
+                "', preco = " + p.getPreco() + 
+                ", estoque = " + p.getEstoque() + 
+                " where produto.codigo_produto = " + p.getCodigo();
+        System.out.println(sql);
+        statement.execute(sql);
+    }
 }
 
       

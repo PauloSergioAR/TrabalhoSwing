@@ -16,9 +16,13 @@ import Model.Produto;
 import Model.Vendedor;
 import Util.TableMouseListener;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -34,9 +38,24 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Listagem extends javax.swing.JFrame {
     private Navigator navigator;
+    
     private JMenuItem vendedorUpdate;
     private JMenuItem vendedorRemove;
     private JPopupMenu vendedorMenu;
+    
+    private JMenuItem compradorUpdate;
+    private JMenuItem compradorRemove;
+    private JPopupMenu compradorMenu;
+    
+    private JMenuItem produtoUpdate;
+    private JMenuItem produtoRemove;
+    private JPopupMenu produtoMenu;
+    
+    ArrayList<Cliente> clientes;
+    ArrayList<Produto> produtos;
+    ArrayList<Vendedor> vendedores;
+    
+    
     /**
      * Creates new form Listagem
      */
@@ -355,6 +374,129 @@ public class Listagem extends javax.swing.JFrame {
         updateProdutosTable();
         updateVendedoresTable();
         initVendedorPopup();
+        initCompradorPopup();
+        initProdutoPopup();
+    }
+    
+    private void initCompradorPopup(){        
+        compradorMenu = new JPopupMenu();
+        compradorRemove = new JMenuItem("Deletar");
+        compradorUpdate = new JMenuItem("Editar");
+        
+        compradorRemove.addActionListener((ActionEvent e) -> {
+            //Codigo para remover aqui
+        });
+        
+        compradorUpdate.addActionListener((ActionEvent e) -> {
+            JTextField nome = new JTextField("", 15);            
+            
+            JLabel labelNome =  new JLabel("Nome: ");            
+            JPanel dialogPanel = new JPanel(new GridBagLayout());
+            
+            GridBagConstraints gbc = new GridBagConstraints();
+            
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            
+            dialogPanel.add(labelNome, gbc);
+            gbc.gridx++;
+            dialogPanel.add(nome, gbc);
+                     
+            
+            int result = JOptionPane.showConfirmDialog(null, dialogPanel, "Editar Cliente", JOptionPane.OK_CANCEL_OPTION);
+            
+            if(result == JOptionPane.OK_OPTION){
+                try{
+                    ClienteDAO dao = new ClienteDAO();
+                    int index = clienteTable.getSelectedRow();
+                    Cliente old = clientes.get(index);
+                    Cliente c = new Cliente(nome.getText(), old.getCPF());
+                    dao.update(c);
+                    updateClienteTable();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao editar cliente");
+                    Logger.getLogger(Listagem.class.getName()).log(Level.SEVERE, null, ex);
+                }                
+            }
+        });
+        
+        compradorMenu.add(compradorRemove);
+        compradorMenu.add(compradorUpdate);
+        
+        clienteTable.addMouseListener(new TableMouseListener(clienteTable));
+        clienteTable.setComponentPopupMenu(compradorMenu);
+    }
+    
+    private void initProdutoPopup(){
+        produtoMenu = new JPopupMenu();
+        produtoRemove = new JMenuItem("Deletar");
+        produtoUpdate = new JMenuItem("Editar");
+        
+        produtoRemove.addActionListener((ActionEvent e) -> {
+            //Codigo para remover aqui
+        });
+        
+        produtoUpdate.addActionListener((ActionEvent e) -> {
+            JTextField nome = new JTextField("", 15);
+            JTextField valor = new JTextField("", 15);
+            JTextField estoque = new JTextField("", 15);
+            
+            JLabel labelNome =  new JLabel("Nome: ");
+            JLabel labelValor =  new JLabel("Valor: ");
+            JLabel labelEstoque =  new JLabel("Estoque:");
+            JPanel dialogPanel = new JPanel(new GridBagLayout());
+            
+            GridBagConstraints gbc = new GridBagConstraints();
+            
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            
+            dialogPanel.add(labelNome, gbc);
+            gbc.gridx++;
+            dialogPanel.add(nome, gbc);
+            
+            gbc.gridy++;
+            gbc.gridx--;
+            
+            dialogPanel.add(labelValor, gbc);
+            gbc.gridx++;
+            dialogPanel.add(valor, gbc);
+            
+            gbc.gridy++;
+            gbc.gridx--;
+            
+            dialogPanel.add(labelEstoque, gbc);
+            gbc.gridx++;
+            dialogPanel.add(estoque, gbc);
+            
+            int result = JOptionPane.showConfirmDialog(null, dialogPanel, "Editar Produto", JOptionPane.OK_CANCEL_OPTION);
+            
+            if(result == JOptionPane.OK_OPTION){
+                 try{
+                    ProdutoDAO dao = new ProdutoDAO();
+                    int index = produtoTable.getSelectedRow();
+                    Produto old = produtos.get(index);
+                    Produto c = new Produto();
+                    
+                    c.setCodigo(old.getCodigo());
+                    c.setEstoque(Integer.parseInt(estoque.getText()));
+                    c.setNome(nome.getText());
+                    c.setPreco(Float.parseFloat(valor.getText()));
+                    
+                    dao.update(c);
+                    updateProdutosTable();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao editar produto");
+                    Logger.getLogger(Listagem.class.getName()).log(Level.SEVERE, null, ex);
+                }                            
+            }
+        });
+        
+        produtoMenu.add(produtoRemove);
+        produtoMenu.add(produtoUpdate);
+        
+        produtoTable.addMouseListener(new TableMouseListener(produtoTable));
+        produtoTable.setComponentPopupMenu(produtoMenu);
     }
     
     private void initVendedorPopup(){
@@ -379,7 +521,20 @@ public class Listagem extends javax.swing.JFrame {
             int result = JOptionPane.showConfirmDialog(null, dialogPanel, "Editar Vendedor", JOptionPane.OK_CANCEL_OPTION);
             
             if(result == JOptionPane.OK_OPTION){
-                //editar no dao
+                try{
+                    VendedorDAO dao = new VendedorDAO();
+                    int index = vendedorTable.getSelectedRow();
+                    
+                    Vendedor old = vendedores.get(index);
+                    Vendedor v = new Vendedor(nome.getText());
+                    v.setCodigo(old.getCodigo());
+                    
+                    dao.update(v);
+                    updateVendedoresTable();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao editar vendedor");
+                    Logger.getLogger(Listagem.class.getName()).log(Level.SEVERE, null, ex);
+                }                
             }
         });
         
@@ -398,7 +553,7 @@ public class Listagem extends javax.swing.JFrame {
         
         try{
             VendedorDAO dao = new VendedorDAO();
-            ArrayList<Vendedor> vendedores = dao.getAll();
+            vendedores = dao.getAll();
             for(Vendedor v : vendedores){
                 row[0] = v.getNome();
                 row[1] = v.getCodigo();                
@@ -417,7 +572,7 @@ public class Listagem extends javax.swing.JFrame {
         
         try{
             ProdutoDAO dao = new ProdutoDAO();
-            ArrayList<Produto> produtos = dao.getAll();
+            produtos = dao.getAll();
             for(Produto p : produtos){
                 row[0] = p.getNome();
                 row[1] = p.getPreco();
@@ -454,7 +609,7 @@ public class Listagem extends javax.swing.JFrame {
         clientemodel.setRowCount(0);
         try{
             ClienteDAO dao = new ClienteDAO();
-            ArrayList<Cliente> clientes = dao.getAll();
+            clientes = dao.getAll();
             for(Cliente c : clientes){
                 row[0] = c.getNome();
                 row[1] = c.getCPF();                
