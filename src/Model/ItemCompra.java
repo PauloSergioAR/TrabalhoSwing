@@ -10,49 +10,50 @@ package Model;
  * @author Paulo
  */
 public class ItemCompra {
-    private int codigoItem;
-    private int codigoProduto;
-    private int compraId;
-    private String nomeProduto;
-    private int quantidade;
+    private int Codigo_Item;
+    private int Codigo_produto;
+    private int Compra_Id;
+    private int Quantidade;
+    
+    private String nome;
 
-    public int getCodigoItem() {
-        return codigoItem;
+    public String getNome() {
+        return nome;
     }
 
-    public void setCodigoItem(int codigoItem) {
-        this.codigoItem = codigoItem;
+    public void setNome(String nome) {
+        this.nome = nome;
+    }        
+
+    public int getCodigo_Item() {
+        return Codigo_Item;
     }
 
-    public int getCodigoProduto() {
-        return codigoProduto;
+    public void setCodigo_Item(int Codigo_Item) {
+        this.Codigo_Item = Codigo_Item;
     }
 
-    public void setCodigoProduto(int codigoProduto) {
-        this.codigoProduto = codigoProduto;
+    public int getCodigo_produto() {
+        return Codigo_produto;
     }
 
-    public int getCompraId() {
-        return compraId;
+    public void setCodigo_produto(int Codigo_produto) {
+        this.Codigo_produto = Codigo_produto;
     }
 
-    public void setCompraId(int compraId) {
-        this.compraId = compraId;
+    public int getCompra_Id() {
+        return Compra_Id;
     }
 
-    public String getNomeProduto() {
-        return nomeProduto;
-    }
-
-    public void setNomeProduto(String nomeProduto) {
-        this.nomeProduto = nomeProduto;
+    public void setCompra_Id(int Compra_Id) {
+        this.Compra_Id = Compra_Id;
     }
 
     public int getQuantidade() {
-        return quantidade;
+        return Quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-    }  
+    public void setQuantidade(int Quantidade) {
+        this.Quantidade = Quantidade;
+    }        
 }

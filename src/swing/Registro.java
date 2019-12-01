@@ -895,7 +895,7 @@ public class Registro extends javax.swing.JFrame {
             int codigo_compra = dao.insert(c);
             
             for(ItemCompra ic : itens){
-                ic.setCompraId(codigo_compra);                
+                ic.setCompra_Id(codigo_compra);                
                 icDAO.insert(ic);
             }
         } catch (SQLException ex) {
@@ -906,9 +906,12 @@ public class Registro extends javax.swing.JFrame {
     private void produtoAddClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_produtoAddClicked
         ItemCompra item = new ItemCompra();
         System.out.println(produtos.get(combo_produto.getSelectedIndex()).getCodigo());
-        item.setCodigoProduto(produtos.get(combo_produto.getSelectedIndex()).getCodigo());
-        item.setNomeProduto(produtos.get(combo_produto.getSelectedIndex()).getNome());
+        int index = combo_produto.getSelectedIndex();
+        
+        item.setCodigo_produto(produtos.get(index).getCodigo());
+        //compra id vai ser setado depois
         item.setQuantidade(Integer.parseInt(field_item_quantidade.getText()));
+        item.setNome(produtos.get(index).getNome());
         
         this.itens.add(item);
 
@@ -918,7 +921,7 @@ public class Registro extends javax.swing.JFrame {
         model.setRowCount(0);
         
         for(ItemCompra i : itens){
-            row[0] = i.getNomeProduto();
+            row[0] = i.getNome();
             row[1] = i.getQuantidade();
             model.addRow(row);
         }

@@ -25,13 +25,13 @@ public class ItemCompraDAO {
     }
     
     public void insert(ItemCompra ic) throws SQLException{
-        String sql = "insert into ItemCompra (codigo, Compra_id, Quantidade)" + 
-                " values(?, ?, ?) returning codigo_item";
+        String sql = "insert into itemcompra (codigo, compra_id, quantidade)" + 
+                " values (?, ?, ?) returning codigo_item";
         
         PreparedStatement statement = connection.prepareStatement(sql);
                
-        statement.setInt(1, ic.getCodigoProduto());
-        statement.setInt(2, ic.getCompraId());
+        statement.setInt(1, ic.getCodigo_produto());
+        statement.setInt(2, ic.getCompra_Id());
         statement.setInt(3, ic.getQuantidade());
         
         ResultSet rs = statement.executeQuery();
@@ -51,9 +51,9 @@ public class ItemCompraDAO {
             int quantidade = result.getInt("Quantidade");
             
             ItemCompra item = new ItemCompra();
-            item.setCodigoItem(codigoItem);
-            item.setCodigoProduto(codigoProduto);
-            item.setCompraId(compraId);
+            item.setCodigo_Item(codigoItem);
+            item.setCodigo_produto(codigoProduto);
+            item.setCompra_Id(compraId);
             item.setQuantidade(quantidade);
             
             itens.add(item);
