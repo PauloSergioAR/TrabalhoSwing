@@ -5,8 +5,22 @@
  */
 package swing;
 
+import DAO.ProdutoDAO;
+import DAO.VendedorDAO;
+import Model.MelhorProduto;
+import Model.MelhorVendedor;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
@@ -47,6 +61,8 @@ public class Home extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btn_exit = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -222,6 +238,10 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Home");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -230,15 +250,26 @@ public class Home extends javax.swing.JFrame {
                 .addContainerGap(915, Short.MAX_VALUE)
                 .addComponent(btn_exit)
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(427, 427, 427)
+                    .addComponent(jLabel1)
+                    .addContainerGap(458, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 4, Short.MAX_VALUE)
+                .addGap(0, 6, Short.MAX_VALUE)
                 .addComponent(btn_exit, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(9, 9, 9)
+                    .addComponent(jLabel1)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 0, 950, 50));
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, 950, 540));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -280,6 +311,59 @@ public class Home extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_btn_exitMousePressed
 
+    public void setVisible(boolean b){
+        initChart();
+        super.setVisible(true);
+    }
+    
+    private void initChart(){
+        JFreeChart chart = ChartFactory.createBarChart("Melhores Vendedores", "Vendedor", "Vendas", createVendedorDataset());
+        
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(560, 360));
+        jTabbedPane1.add("Melhor Vendedor", chartPanel);
+        
+        JFreeChart chart2 = ChartFactory.createBarChart("Melhores Produtos", "Produto", "Vendas", createProdutoDataset());
+        
+        ChartPanel chartPanel2 = new ChartPanel(chart2);
+        chartPanel.setPreferredSize(new Dimension(560, 360));
+        jTabbedPane1.add("Melhor Produto", chartPanel2);
+    }
+    
+    private CategoryDataset createVendedorDataset(){              
+        try{
+            VendedorDAO dao = new VendedorDAO();
+            ArrayList<MelhorVendedor> lista = dao.getMelhores();
+            
+            final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+            
+            for(MelhorVendedor v : lista){
+                dataset.addValue(v.getVendas(), v.getNome(), "Vendas");
+            }
+            return dataset;
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        return null;
+    }
+    
+    private CategoryDataset createProdutoDataset(){
+        try{
+            ProdutoDAO dao = new ProdutoDAO();
+            ArrayList<MelhorProduto> lista = dao.getMelhores();
+            
+            final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+            
+            for(MelhorProduto p: lista){
+                dataset.addValue(p.getVendas(), p.getNome(), "Vendas");
+            }
+            return dataset;
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        return null;
+    }
+    
     /**
      * @param args the command line arguments
      */    
@@ -295,8 +379,7 @@ public class Home extends javax.swing.JFrame {
            
         } for(int i=0;i<indicators.length;i++){
            indicators[i].setOpaque(false);           
-        }
-        
+        }        
     }
     
 
@@ -308,10 +391,12 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JPanel ind_1;
     private javax.swing.JPanel ind_3;
     private javax.swing.JPanel ind_4;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel side_pane;
     // End of variables declaration//GEN-END:variables
 }

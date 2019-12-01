@@ -6,6 +6,7 @@
 package DAO;
 
 import Model.Cliente;
+import Model.MelhorProduto;
 import Model.Produto;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -59,9 +60,26 @@ public class ProdutoDAO {
             Produto p = new Produto(nome, preco, estoque);
             p.setCodigo(result.getInt("codigo_produto"));
             produtos.add(p);
-        }
-        
+        }        
         return produtos;
+    }
+    
+    public ArrayList<MelhorProduto> getMelhores() throws SQLException{
+        ArrayList<MelhorProduto> lista = new ArrayList<>();
+         Statement statement = connection.createStatement();
+        String query = "select produto.nome, count(itemcompra.codigo) from produto, itemcompra" + 
+                " where itemcompra.codigo = produto.codigo_produto" + 
+                " group by produto.nome order by 2 desc";
+        
+        ResultSet result = statement.executeQuery(query);
+        
+        while(result.next()){
+            int qtd = result.getInt(2);
+            String nome = result.getString(1);
+            MelhorProduto p = new MelhorProduto(nome, qtd);
+            lista.add(p);
+        }
+        return lista;
     }
 }
 

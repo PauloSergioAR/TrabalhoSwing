@@ -5,10 +5,12 @@
  */
 package DAO;
 
+import Model.MelhorVendedor;
 import Model.Vendedor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -45,5 +47,24 @@ public class VendedorDAO {
             vendedores.add(v);
         }        
         return vendedores;
+    }
+    
+    public ArrayList<MelhorVendedor> getMelhores() throws SQLException{
+        ArrayList<MelhorVendedor> lista = new ArrayList<>();
+        
+        Statement statement = connection.createStatement();
+        String query = "select vendedor.nome, count(compra.idvendedor) from vendedor, compra" + 
+                " where compra.idvendedor = vendedor.codigo" + 
+                " group by vendedor.nome order by 2 desc";
+        
+        ResultSet result = statement.executeQuery(query);
+        
+        while(result.next()){
+            int qtd = result.getInt(2);
+            String nome = result.getString(1);
+            MelhorVendedor v = new MelhorVendedor(nome, qtd);
+            lista.add(v);
+        }
+        return lista;
     }
 }
