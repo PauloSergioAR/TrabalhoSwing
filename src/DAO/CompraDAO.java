@@ -64,7 +64,7 @@ public class CompraDAO {
                     "where itemcompra.compra_id = " + String.valueOf(compra_id) + 
                     " and produto.codigo_produto = itemcompra.codigo");                                    
             System.out.println("Aqui");
-            
+                                    
             while(resultc.next()){
                 System.out.println("Aqui");
                 valor += resultc.getFloat("preco") * resultc.getFloat("quantidade");
@@ -74,7 +74,7 @@ public class CompraDAO {
             lista.add(c);
         }                                                  
         return lista;
-    }
+    }    
     
     public ArrayList<Compra> getAll() throws SQLException{
         ArrayList<Compra> compras = new ArrayList<>();
