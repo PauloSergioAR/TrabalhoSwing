@@ -14,11 +14,18 @@ import Model.Compra;
 import Model.DisplayCompra;
 import Model.Produto;
 import Model.Vendedor;
+import Util.TableMouseListener;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,6 +34,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Listagem extends javax.swing.JFrame {
     private Navigator navigator;
+    private JMenuItem vendedorUpdate;
+    private JMenuItem vendedorRemove;
+    private JPopupMenu vendedorMenu;
     /**
      * Creates new form Listagem
      */
@@ -343,7 +353,41 @@ public class Listagem extends javax.swing.JFrame {
         updateVendasTable();
         updateClienteTable();
         updateProdutosTable();
-        updateVendedoresTable();        
+        updateVendedoresTable();
+        initVendedorPopup();
+    }
+    
+    private void initVendedorPopup(){
+        System.out.println("alo");
+        vendedorMenu = new JPopupMenu();
+        vendedorRemove = new JMenuItem("Deletar");
+        vendedorUpdate = new JMenuItem("Editar");
+        
+        vendedorRemove.addActionListener((ActionEvent e) -> {
+            //Codigo para remover aqui
+        });
+        
+        vendedorUpdate.addActionListener((ActionEvent e) -> {
+            JTextField nome = new JTextField("", 30);
+            
+            JLabel labelNome =  new JLabel("Nome:");
+            JPanel dialogPanel = new JPanel();
+            
+            dialogPanel.add(labelNome);
+            dialogPanel.add(nome);
+            
+            int result = JOptionPane.showConfirmDialog(null, dialogPanel, "Editar Vendedor", JOptionPane.OK_CANCEL_OPTION);
+            
+            if(result == JOptionPane.OK_OPTION){
+                //editar no dao
+            }
+        });
+        
+        vendedorMenu.add(vendedorRemove);
+        vendedorMenu.add(vendedorUpdate);
+        
+        vendedorTable.addMouseListener(new TableMouseListener(vendedorTable));
+        vendedorTable.setComponentPopupMenu(vendedorMenu);
     }
     
     public void updateVendedoresTable(){
