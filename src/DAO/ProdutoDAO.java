@@ -69,7 +69,7 @@ public class ProdutoDAO {
          Statement statement = connection.createStatement();
         String query = "select produto.nome, count(itemcompra.codigo) from produto, itemcompra" + 
                 " where itemcompra.codigo = produto.codigo_produto" + 
-                " group by produto.nome order by 2 desc";
+                " group by produto.nome order by count desc limit 5";
         
         ResultSet result = statement.executeQuery(query);
         

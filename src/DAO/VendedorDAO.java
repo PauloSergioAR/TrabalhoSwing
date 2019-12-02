@@ -55,7 +55,7 @@ public class VendedorDAO {
         Statement statement = connection.createStatement();
         String query = "select vendedor.nome, count(compra.idvendedor) from vendedor, compra" + 
                 " where compra.idvendedor = vendedor.codigo" + 
-                " group by vendedor.nome order by 2 desc";
+                " group by vendedor.nome order by count desc limit 5";
         
         ResultSet result = statement.executeQuery(query);
         
